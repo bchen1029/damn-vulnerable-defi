@@ -37,6 +37,8 @@ contract UnstoppableLender is ReentrancyGuard {
         require(balanceBefore >= borrowAmount, "Not enough tokens in pool");
 
         // Ensured by the protocol via the `depositTokens` function
+        // 不透過 depositTokens(), 轉 ERC20 給這個 contract, balanceBefore 就會增加, 但是 poolBalance 不會增加
+        // 下面這行 assert 就會 failed
         assert(poolBalance == balanceBefore);
         
         damnValuableToken.transfer(msg.sender, borrowAmount);
